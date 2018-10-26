@@ -4,11 +4,11 @@ import (
 	"shard/openapi/out/go"
 	"context"
 	"github.com/google/uuid"
-	"shard/mythril"
+	"shard/mythril/generic"
 	log "github.com/sirupsen/logrus"
 )
 
-func BuildMythrilServiceALPHA(apiKey string) mythril.MythrilService {
+func BuildMythrilServiceALPHA(apiKey string) generic.MythrilService {
 	log.Debug("Building API cl")
 
 	c := openapi.NewConfiguration()
@@ -51,10 +51,10 @@ func (api *MythrilServiceALPHA) Submit(bytecode string) (*uuid.UUID, error) {
 	return &uuid, nil
 }
 
-func (api *MythrilServiceALPHA) CheckStatus(_uuid uuid.UUID) (*mythril.AnalysisJobStatus, error) {
+func (api *MythrilServiceALPHA) CheckStatus(_uuid uuid.UUID) (*generic.AnalysisJobStatus, error) {
 	return nil, nil
 }
 
-func (api *MythrilServiceALPHA) GetIssueResult(_uuid uuid.UUID) ([]mythril.Issue, error) {
+func (api *MythrilServiceALPHA) GetIssueResult(_uuid uuid.UUID) ([]generic.Issue, error) {
 	return nil, nil
 }
