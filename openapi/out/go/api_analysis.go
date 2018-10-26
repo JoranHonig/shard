@@ -484,7 +484,7 @@ type SubmitAnalysisOpts struct {
 AnalysisApiService New analysis
 Submits Ethereum contract(s) for vulnerability analysis, and returns created analysis record. **uuid** field of the response should be used in subsequent calls to [&#x60;GET /analysis/{uuid}&#x60;](#operation/getAnalysis) and [&#x60;GET /analysis/{uuid}/issues&#x60;](#operation/getAnalysisIssues) to check analysis status, metadata, and the list of detected issues.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param SubmitAnalysisOpts
+ * @param uNKNOWNBASETYPE
 @return AnalysisResponse
 */
 func (a *AnalysisApiService) SubmitAnalysis(ctx context.Context, submitAnalysisOpts SubmitAnalysisOpts) (AnalysisResponse, *http.Response, error) {

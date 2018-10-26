@@ -30,6 +30,7 @@ import (
 	"unicode/utf8"
 
 	"golang.org/x/oauth2"
+	"io/ioutil"
 )
 
 var (
@@ -146,8 +147,11 @@ func parameterToString(obj interface{}, collectionFormat string) string {
 	return fmt.Sprintf("%v", obj)
 }
 
+
+
 // callAPI do the request.
 func (c *APIClient) callAPI(request *http.Request) (*http.Response, error) {
+	fmt.Println(formatRequest(request))
 	return c.cfg.HTTPClient.Do(request)
 }
 
@@ -476,4 +480,40 @@ func (e GenericOpenAPIError) Body() []byte {
 // Model returns the unpacked model of the error
 func (e GenericOpenAPIError) Model() interface{} {
 	return e.model
+}
+
+// formatRequest generates ascii representation of a request
+func formatRequest(r *http.Request) string {
+	// Create return string
+	var request []string
+
+	// Add the request string
+	url := fmt.Sprintf("%v %v %v", r.Method, r.URL, r.Proto)
+	request = append(request, url)
+
+	// Add the host
+	request = append(request, fmt.Sprintf("Host: %v", r.Host))
+
+	// Loop through headers
+	for name, headers := range r.Header {
+		name = strings.ToLower(name)
+		for _, h := range headers {
+			request = append(request, fmt.Sprintf("%v: %v", name, h))
+		}
+	}
+
+	// If this is a POST, add post data
+	if r.Method == "POST" {
+		r.ParseForm()
+		buf, _ := ioutil.ReadAll(r.Body)
+		rdr1 := ioutil.NopCloser(bytes.NewBuffer(buf))
+		rdr2 := ioutil.NopCloser(bytes.NewBuffer(buf))
+		r.Body = rdr2
+		request = append(request, fmt.Sprintf("%q", rdr1))
+		request = append(request, "\n")
+		request = append(request, r.Form.Encode())
+	}
+
+	// Return the request as a string
+	return strings.Join(request, "\n")
 }

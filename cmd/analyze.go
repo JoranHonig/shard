@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"armlet-go/mythril"
+	"shard/mythril"
 	log "github.com/sirupsen/logrus"
 	"fmt"
 )
@@ -28,7 +28,12 @@ var analyzeCmd = &cobra.Command{
 			return
 		}
 		log.Info(fmt.Sprintf("Starting analysis for: %s", contractBytecode))
-		mythrilService := mythril.BuildMythrilService(apiKey)
+		mythrilService, err := mythril.BuildMythrilService(mythril.ALPHA, apiKey)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		mythrilService.Submit(contractBytecode)
 	},
 }

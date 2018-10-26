@@ -1,7 +1,7 @@
 package main
 
 import (
-	"armlet-go/cmd"
+	"shard/cmd"
 )
 
 func main() {
