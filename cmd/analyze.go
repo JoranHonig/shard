@@ -21,7 +21,6 @@ func init() {
 	analyzeCmd.Flags().StringVarP(&filename, "filename", "f", "", "The contract to analyze")
 	analyzeCmd.Flags().StringVarP(&apiKey, "api-key", "k", "", "The api key to authenticate with")
 
-	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(analyzeCmd)
 }
 

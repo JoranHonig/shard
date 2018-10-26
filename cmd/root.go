@@ -23,7 +23,6 @@ var versionCmd = &cobra.Command{
 }
 
 func Execute() {
-
 	setupViper()
 	rootCmd.AddCommand(versionCmd)
 	if err := rootCmd.Execute(); err != nil {
