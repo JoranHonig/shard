@@ -1,0 +1,481 @@
+openapi: 3.0.1
+info:
+  description: |
+    The Mythril service is currently in closed alpha. API keys are made
+    available to selected community members (join the Mythril Discord to
+    request one).
+
+    **Note that the interface will still undergo significant changes.**
+
+    Mythril is a security analysis tool for Ethereum smart contracts.
+    It uses concolic analysis, taint analysis, and control flow checking to
+    detect a variety of security vulnerabilities.
+
+    Mythril API exposes this functionality over the network.
+
+    In the future this API will integrate a number of other security analyzer
+    tools seemlessly.
+  title: Mythril API
+  version: v1
+servers:
+- url: https://api.mythril.ai/v1
+paths:
+  /analyses:
+    get:
+      description: Lists analyses visible to the user, at most 20 records a time, sorted by submission time from the most recent to the oldest ones. Use `offset` parameter for results pagination.
+      operationId: listAnalyses
+      parameters:
+      - description: Pagination offset. Number of records to skip.
+        explode: true
+        in: query
+        name: offset
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      - description: Submission time filter. Restricts results to analyses submitted after this time.
+        explode: true
+        in: query
+        name: dateFrom
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: Submission time filter. Restricts results to analyses submitted before this time.
+        explode: true
+        in: query
+        name: dateTo
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AnalysisResponse'
+                type: array
+          description: Success
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Bad Request
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Unauthorized
+        429:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: |
+            Too Many Requests - depending on the type of service you have
+            the number of requests per hour may be rate limited.
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      summary: List of analyses
+      tags:
+      - Analysis
+    post:
+      description: Submits Ethereum contract(s) for vulnerability analysis, and returns created analysis record. **uuid** field of the response should be used in subsequent calls to [`GET /analysis/{uuid}`](#operation/getAnalysis) and [`GET /analysis/{uuid}/issues`](#operation/getAnalysisIssues) to check analysis status, metadata, and the list of detected issues.
+      operationId: submitAnalysis
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/AnalysisBodyContract'
+              - $ref: '#/components/schemas/AnalysisBodyContracts'
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResponse'
+          description: Success &mdash; contract(s) were queued for vulnerability analysis.
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Bad Request &mdash; possibly an ill-formed POST request. See "error" and "details" parameters details.
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: |
+            Unauthorized &mdash; probably an empty or invalid Mythril API key (Bearer) was given.
+        429:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: |
+            Too Many Requests &mdash; depending on the type of service you have, the number of requests per hour may be rate limited.
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: |
+            Internal Server Error &mdash; our bad
+      security:
+      - Bearer: []
+      summary: New analysis
+      tags:
+      - Analysis
+  /analyses/{uuid}:
+    get:
+      description: Gets status and metadata of the analysis specified by UUID. When analysis **status** is _Finished_, [`GET /analyses/{uuid}/issues`](#operation/getAnalysisIssues) may be used to list detected vulnerabilities.
+      operationId: getAnalysis
+      parameters:
+      - description: analysis id
+        explode: false
+        in: path
+        name: uuid
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResponse'
+          description: |
+            Success &mdash; Request completed. However check the _result_ field in the JSON response to make sure that it is "Finished" and not "Error".
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Bad Request
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: |
+            Unauthorized &mdash; probably an empty or invalid Mythril API key (Bearer) was given.
+        429:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: |
+            Too Many Requests &mdash; depending on the type of service you have, the number of requests per hour may be rate limited.
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: |
+            Internal Server Error &mdash; our bad
+      security:
+      - Bearer: []
+      summary: Analysis by UUID
+      tags:
+      - Analysis
+  /analyses/{uuid}/issues:
+    get:
+      description: Lists issues detected during the analysis specified by UUID. Request will fail for unfinished analyses, use [`GET /analyses/{uuid}](#operation/getAnalysis) to verify the current analysis status.
+      operationId: getAnalysisIssues
+      parameters:
+      - description: analysis id
+        explode: false
+        in: path
+        name: uuid
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisIssuesResponse'
+          description: Success
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Bad Request
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Unauthorized
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Unauthorized
+        429:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Too Many Requests
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: |
+            Internal Server Error &mdash; our bad
+      security:
+      - Bearer: []
+      summary: Detected issues
+      tags:
+      - Analysis
+  /openapi.yaml:
+    get:
+      description: Gets OpenAPI specification of Mythril API.
+      operationId: getOpenApiYaml
+      responses:
+        200:
+          content:
+            application/yaml:
+              example: |
+                YAML document with OpenAPI specification for Mythril API
+              schema:
+                description: OpenAPI specification of Mythril API.
+                type: YAML
+          description: Success
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: |
+            Internal Server Error &mdash; our bad
+      security: []
+      summary: OpenAPI specification
+      tags:
+      - Auxiliary
+  /version:
+    get:
+      description: Gets current versions of Mythril API and its core sub-modules.
+      operationId: getVersion
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                api: v1.0.24
+                mythril: v0.18.11
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+          description: Success
+      security: []
+      summary: API version
+      tags:
+      - Auxiliary
+components:
+  parameters:
+    analysisIdParam:
+      description: analysis id
+      explode: false
+      in: path
+      name: uuid
+      required: true
+      schema:
+        format: int32
+        type: integer
+      style: simple
+  schemas:
+    AnalysisBodyContract:
+      description: |
+        Currently we only accept `bytecode` for the type value.
+        A contract string which is EVM bytecode in hex. It can optionally have `0x` prepended at the front.
+        Examples:
+          ```json
+          {
+          "type": "bytecode",
+          "contract": "f3"
+          }
+          ```
+      properties:
+        type:
+          enum:
+          - bytecode
+          type: string
+        contract:
+          type: string
+      required:
+      - type
+      type: object
+    AnalysisBodyContracts:
+      description: |
+        Currently we only accept `bytecode` for the type value.
+
+        An array of contract strings must be given.
+
+        A contract string is EVM bytecode in hex. It can optionally have `0x` prepended at the front.
+
+        Examples:
+          ```json
+          {
+          "type": "bytecode",
+          "contracts":
+            - "6004f3"
+            - "0x6003f3"
+          }
+          ```
+      properties:
+        type:
+          enum:
+          - bytecode
+          type: string
+        contracts:
+          items:
+            type: string
+          type: array
+      required:
+      - type
+      type: object
+    AnalysisResponse:
+      example:
+        submittedBy: 2000-01-23T04:56:07.000+00:00
+        apiVersion: apiVersion
+        mythrilVersion: mythrilVersion
+        runTime: 6
+        submittedAt: 2000-01-23T04:56:07.000+00:00
+        uuid: uuid
+        queueTime: 0
+        status: Queued
+      properties:
+        apiVersion:
+          description: |
+            Mythril API version at the moment of analysis execution;
+            or at the moment of submission, if this analysis is still queued.
+          type: string
+        mythrilVersion:
+          description: |
+            Mythril core version at the moment of analysis execution;
+            or at the moment of submission, if this analysis is still queued.
+          type: string
+        queueTime:
+          description: |
+            The time [ms] from analysis submission to its execution start, or to
+            the present moment, if this analysis is still in the queue.
+          format: int64
+          type: integer
+        runTime:
+          description: |
+            The time [ms] from the start of analysis execution till its end.
+            Equals zero, if this analysis is still in the queue.
+          format: int64
+          type: integer
+        status:
+          description: Current status of the analysis.
+          enum:
+          - Queued
+          - In progress
+          - Finished
+          - Error
+          type: string
+        submittedAt:
+          description: Timestamp of the analysis submission to the API.
+          format: date-time
+          type: string
+        submittedBy:
+          description: ID of the submitter.
+          format: date-time
+          type: string
+        uuid:
+          description: Unique identifier of the analysis.
+          type: string
+      type: object
+    AnalysisIssuesResponse:
+      items:
+        properties:
+          debug:
+            type: string
+          address:
+            type: string
+          type:
+            type: string
+          function:
+            type: string
+          description:
+            type: string
+          title:
+            type: string
+        type: object
+      type: array
+    ErrorModel:
+      properties:
+        status:
+          description: HTTP status code
+          format: int64
+          type: number
+        error:
+          description: error message
+          type: string
+        details:
+          items:
+            $ref: '#/components/schemas/ErrorModel_details'
+          type: array
+      type: object
+    inline_response_200:
+      example:
+        mythril: mythril
+        api: api
+      properties:
+        api:
+          description: Main version of the API as a whole.
+          format: semver
+          type: string
+        mythril:
+          description: Version of Mythril analyser being used by the API.
+          format: semver
+          type: string
+    ErrorModel_context:
+      properties:
+        value:
+          type: string
+        key:
+          type: string
+        label:
+          type: string
+    ErrorModel_details:
+      properties:
+        message:
+          type: string
+        path:
+          type: string
+        type:
+          type: string
+        context:
+          $ref: '#/components/schemas/ErrorModel_context'
+  securitySchemes:
+    Bearer:
+      in: header
+      name: Authorization
+      type: apiKey
