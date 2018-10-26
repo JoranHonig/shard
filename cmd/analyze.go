@@ -8,6 +8,7 @@ import (
 	"shard/mythril"
 	"strings"
 	"errors"
+	"github.com/spf13/viper"
 )
 
 var contractBytecode string
@@ -29,7 +30,15 @@ var analyzeCmd = &cobra.Command{
 	Short: "Analyzes the contract",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if len(apiKey) == 0 {
+			apiKey = viper.GetString("api-key")
+		}
+		if len(apiKey) == 0 {
 			println("No valid api key provided, exiting...")
+			log.Exit(0)
+		}
+
+		if len(filename) == 0 && len(contractBytecode) == 0 {
+			println("You must provide either runtime bytecode or a filename")
 			log.Exit(0)
 		}
 	},
