@@ -9,6 +9,7 @@ import (
 	"strings"
 	"errors"
 	"github.com/spf13/viper"
+	"regexp"
 )
 
 var contractBytecode string
@@ -16,17 +17,15 @@ var filename string
 var apiKey string
 
 func init() {
-
-	analyzeCmd.Flags().StringVarP(&contractBytecode, "runtime-bytecode", "c", "", "The runtime bytecode to analyze")
-	analyzeCmd.Flags().StringVarP(&filename, "filename", "f", "", "The contract to analyze")
 	analyzeCmd.Flags().StringVarP(&apiKey, "api-key", "k", "", "The api key to authenticate with")
 
 	rootCmd.AddCommand(analyzeCmd)
 }
 
 var analyzeCmd = &cobra.Command{
-	Use:   "analyze",
+	Use:   "analyze [bytecode|filename]",
 	Short: "Analyzes the contract",
+	Args: cobra.MinimumNArgs(1),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if len(apiKey) == 0 {
 			apiKey = viper.GetString("api-key")
@@ -36,10 +35,21 @@ var analyzeCmd = &cobra.Command{
 			log.Exit(0)
 		}
 
-		if len(filename) == 0 && len(contractBytecode) == 0 {
-			println("You must provide either runtime bytecode or a filename")
-			log.Exit(0)
+		isBytecode, err := regexp.MatchString("^(0x)?([0-9a-fA-F]{2})+$", args[0])
+
+		if err != nil {
+			log.Fatal(err)
 		}
+
+		if isBytecode {
+			log.Info("Analyzing bytecode")
+			contractBytecode = args[0]
+		} else {
+			log.Info("Analyzing contract file")
+			filename = args[0]
+		}
+
+
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
