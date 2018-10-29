@@ -91,7 +91,7 @@ func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string) ([]common.Issue, 
 				resultChannel <- res
 				return
 			case "Error":
-				logrus.Info("Error encountered during analysis")
+				logrus.Error("Error encountered during analysis")
 				resultChannel <- nil
 			default:
 				continue
