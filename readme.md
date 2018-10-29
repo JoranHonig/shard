@@ -17,9 +17,7 @@ As any with any tool, the help command can be very useful
 shard help
 ```
 
-[WIP] To analyze a contract execute:
+To analyze a contract execute:
 ```
-> shard analyze filename.sol
-# or
 > shard analyze 0x606b...
 ```
