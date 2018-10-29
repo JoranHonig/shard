@@ -111,8 +111,8 @@ func (b *BaseAnalysisService) AnalyzeSourceCode(sourceCode string) ([]generic.Is
 	resultChannel := make(chan []generic.Issue, 1)
 
 	select {
-	//case <- time.After(10 * time.Second):
-	//	return nil, errors.New("Timeout encountered in the analysis")
+	case <- time.After(10 * time.Second):
+		return nil, errors.New("Timeout encountered in the analysis")
 	case result := <- resultChannel:
 		return result, nil
 	}

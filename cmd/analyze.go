@@ -6,18 +6,17 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"shard/core"
-	"shard/mythril"
 	"regexp"
 	"shard/mythril/generic"
 	"text/template"
 	"os"
+	"shard/mythril"
 )
 
 var apiKey string
 var analysisService core.AnalysisService
 
 func init() {
-
 	analyzeCmd.Flags().StringVarP(&apiKey, "api-key", "k", "", "The api key to authenticate with. Overrides config value.")
 	viper.BindPFlag("api-key", analyzeCmd.Flags().Lookup("api-key"))
 	RootCmd.AddCommand(analyzeCmd)
@@ -28,17 +27,29 @@ var analyzeCmd = &cobra.Command{
 	Short: "Analyzes the contract",
 	Args:  cobra.MinimumNArgs(1),
 	PreRun: func(cmd *cobra.Command, args []string) {
-		verifyApiKey()
-		setupAnalysisService()
+		// Check api key
+		apiKey = viper.GetString("api-key")
+		if len(apiKey) == 0 {
+			println("No valid api key provided, exiting...")
+			log.Exit(0)
+		}
+
+		// Setup mythril service
+		s, err := mythril.BuildMythrilService(mythril.ALPHA, apiKey)
+		if err != nil {
+			log.Fatal(err)
+		}
+		analysisService = &core.BaseAnalysisService{MythrilService: s}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-
 		mode := determineMode(args[0])
 
 		switch mode {
 		case Bin:
 			analyzeBytecode(args[0])
 		case Filename:
+			log.Fatal("Compilation not fully supported")
+
 			byteCodes, err := core.Compile(args[0])
 
 			if err != nil {
@@ -52,22 +63,6 @@ var analyzeCmd = &cobra.Command{
 			fmt.Println("Can't handle that input")
 		}
 	},
-}
-
-func setupAnalysisService() {
-	s, err := mythril.BuildMythrilService(mythril.ALPHA, apiKey)
-	if err != nil {
-		log.Fatal(err)
-	}
-	analysisService = &core.BaseAnalysisService{MythrilService: s}
-}
-
-func verifyApiKey(){
-	apiKey = viper.GetString("api-key")
-	if len(apiKey) == 0 {
-		println("No valid api key provided, exiting...")
-		log.Exit(0)
-	}
 }
 
 type InputType int
@@ -110,7 +105,12 @@ func analyzeBytecode(bytecode string) {
 }
 
 func printLeThings(issues []generic.Issue) {
-	templ, err := template.New("IssueTemplate").Parse("== {{.Title}} ==\n{{.Description}}")
+	templ, err := template.New("IssueTemplate").Parse(
+		"== {{.Title}} ==\n" +
+			"Function: {{.Function}} \n" +
+			"Type: {{.Type}} \n" +
+			"Description: \n" +
+			"{{.Description}}")
 	if err != nil {
 		log.Fatal(err)
 	}
