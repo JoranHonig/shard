@@ -34,10 +34,7 @@ func (api *MythrilServiceALPHA) Submit(bytecode string) (*uuid.UUID, error) {
 		nil,
 	}
 	analysisApi := api.openApiClient.AnalysisApi
-	response, http_response, error := analysisApi.SubmitAnalysis(ctx, options)
-
-	log.Info(response)
-	log.Info(http_response)
+	response, _, error := analysisApi.SubmitAnalysis(ctx, options)
 
 	if error != nil {
 		log.Fatal(error)
@@ -52,7 +49,23 @@ func (api *MythrilServiceALPHA) Submit(bytecode string) (*uuid.UUID, error) {
 }
 
 func (api *MythrilServiceALPHA) CheckStatus(_uuid uuid.UUID) (*generic.AnalysisJobStatus, error) {
-	return nil, nil
+	ctx := context.Background()
+
+	ctx = context.WithValue(ctx, openapi.ContextAPIKey, openapi.APIKey{api.apiKey, "Bearer"})
+
+
+	analysisApi := api.openApiClient.AnalysisApi
+	response, _, error := analysisApi.GetAnalysis(ctx, _uuid.String())
+
+	//log.Info(response)
+	//log.Info(http_response)
+
+	if error != nil {
+		log.Fatal(error)
+	}
+
+	return &generic.AnalysisJobStatus{Uuid: _uuid, Status: response.Status}, nil
+
 }
 
 func (api *MythrilServiceALPHA) GetIssueResult(_uuid uuid.UUID) ([]generic.Issue, error) {

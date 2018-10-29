@@ -16,8 +16,8 @@ type Issue struct {
 }
 
 type AnalysisJobStatus struct {
-	uuid uuid.UUID
-	status string
+	Uuid uuid.UUID
+	Status string
 }
 
 

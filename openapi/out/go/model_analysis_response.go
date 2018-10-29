@@ -26,7 +26,7 @@ type AnalysisResponse struct {
 	// Timestamp of the analysis submission to the API.
 	SubmittedAt time.Time `json:"submittedAt,omitempty"`
 	// ID of the submitter.
-	SubmittedBy time.Time `json:"submittedBy,omitempty"`
+	SubmittedBy string `json:"submittedBy,omitempty"`
 	// Unique identifier of the analysis.
 	Uuid string `json:"uuid,omitempty"`
 }

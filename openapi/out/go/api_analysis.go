@@ -33,7 +33,7 @@ Gets status and metadata of the analysis specified by UUID. When analysis **stat
  * @param uuid analysis id
 @return AnalysisResponse
 */
-func (a *AnalysisApiService) GetAnalysis(ctx context.Context, uuid int32) (AnalysisResponse, *http.Response, error) {
+func (a *AnalysisApiService) GetAnalysis(ctx context.Context, uuid string) (AnalysisResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod   = strings.ToUpper("Get")
 		localVarPostBody     interface{}
@@ -547,6 +547,7 @@ func (a *AnalysisApiService) SubmitAnalysis(ctx context.Context, submitAnalysisO
 	}
 
 	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	fmt.Println(string(localVarBody))
 	localVarHttpResponse.Body.Close()
 	if err != nil {
 		return localVarReturnValue, localVarHttpResponse, err

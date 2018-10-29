@@ -151,7 +151,7 @@ func parameterToString(obj interface{}, collectionFormat string) string {
 
 // callAPI do the request.
 func (c *APIClient) callAPI(request *http.Request) (*http.Response, error) {
-	fmt.Println(formatRequest(request))
+	//fmt.Println(formatRequest(request))
 	return c.cfg.HTTPClient.Do(request)
 }
 
