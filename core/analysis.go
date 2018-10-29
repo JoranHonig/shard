@@ -8,11 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-
-type Issue struct {
-
-}
-
 type SoliditySource struct {
 	Filename string
 	SourceCode string
@@ -28,10 +23,10 @@ type SolidityContract struct {
 }
 
 type AnalysisService interface {
-	AnalyzeRuntimeBytecode(bytecode string) ([]Issue, error)
-	AnalyzeBytecode(bytecode string) ([]Issue, error)
-	AnalyzeSourceCode(sourceCode string) ([]Issue, error)
-	AnalyzeContract(contract SolidityContract) ([]Issue, error)
+	AnalyzeRuntimeBytecode(bytecode string) ([]generic.Issue, error)
+	AnalyzeBytecode(bytecode string) ([]generic.Issue, error)
+	AnalyzeSourceCode(sourceCode string) ([]generic.Issue, error)
+	AnalyzeContract(contract SolidityContract) ([]generic.Issue, error)
 }
 
 
@@ -39,7 +34,7 @@ type BaseAnalysisService struct {
 	MythrilService generic.MythrilService
 }
 
-func IsClosed(ch <-chan []Issue) bool {
+func IsClosed(ch <-chan []generic.Issue) bool {
 	select {
 	case <-ch:
 		return true
@@ -49,8 +44,8 @@ func IsClosed(ch <-chan []Issue) bool {
 	return false
 }
 
-func (b *BaseAnalysisService) AnalyzeRuntimeBytecode(bytecode string) ([]Issue, error){
-	resultChannel := make(chan []Issue, 1)
+func (b *BaseAnalysisService) AnalyzeRuntimeBytecode(bytecode string) ([]generic.Issue, error){
+	resultChannel := make(chan []generic.Issue, 1)
 
 	select {
 	case <- time.After(10 * time.Second):
@@ -60,11 +55,11 @@ func (b *BaseAnalysisService) AnalyzeRuntimeBytecode(bytecode string) ([]Issue, 
 	}
 }
 
-func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string) ([]Issue, error) {
+func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string) ([]generic.Issue, error) {
 
-	resultChannel := make(chan []Issue, 1)
+	resultChannel := make(chan []generic.Issue, 1)
 	go func() {
-		logrus.Info("Submitting job to the mythril service")
+		logrus.Debug("Submitting job to the mythril service")
 		id, err := b.MythrilService.Submit(bytecode)
 
 		if err != nil {
@@ -75,7 +70,7 @@ func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string) ([]Issue, error) 
 		for !IsClosed(resultChannel) {
 			time.Sleep(1 * time.Second)
 
-			logrus.Info("Checking Status")
+			logrus.Debug("Checking Status")
 			s, err := b.MythrilService.CheckStatus(*id)
 			if err != nil {
 				logrus.Info(err)
@@ -85,14 +80,20 @@ func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string) ([]Issue, error) 
 				logrus.Info("Analysis status for job changed to: ", s.Status)
 				previousStatus = s.Status
 			}
+
 			switch s.Status {
-			case "Done":
-				resultChannel <- nil
+			case "Finished":
+				res, err := b.MythrilService.GetIssueResult(*id)
+				if err != nil {
+					log.Fatal(err)
+				}
+				resultChannel <- res
+				return
 			case "Error":
 				logrus.Info("Error encountered during analysis")
 				resultChannel <- nil
 			default:
-				resultChannel <- nil
+				continue
 			}
 		}
 	}()
@@ -106,8 +107,8 @@ func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string) ([]Issue, error) 
 	}
 }
 
-func (b *BaseAnalysisService) AnalyzeSourceCode(sourceCode string) ([]Issue, error){
-	resultChannel := make(chan []Issue, 1)
+func (b *BaseAnalysisService) AnalyzeSourceCode(sourceCode string) ([]generic.Issue, error){
+	resultChannel := make(chan []generic.Issue, 1)
 
 	select {
 	//case <- time.After(10 * time.Second):
@@ -117,8 +118,8 @@ func (b *BaseAnalysisService) AnalyzeSourceCode(sourceCode string) ([]Issue, err
 	}
 }
 
-func (b *BaseAnalysisService) AnalyzeContract(contract SolidityContract) ([]Issue, error){
-	resultChannel := make(chan []Issue, 1)
+func (b *BaseAnalysisService) AnalyzeContract(contract SolidityContract) ([]generic.Issue, error){
+	resultChannel := make(chan []generic.Issue, 1)
 
 	select {
 	case <- time.After(10 * time.Second):
@@ -127,3 +128,5 @@ func (b *BaseAnalysisService) AnalyzeContract(contract SolidityContract) ([]Issu
 		return result, nil
 	}
 }
+
+

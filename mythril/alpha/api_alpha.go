@@ -1,16 +1,13 @@
 package alpha
 
 import (
-	"shard/openapi/out/go"
 	"context"
 	"github.com/google/uuid"
 	"shard/mythril/generic"
-	log "github.com/sirupsen/logrus"
+	"shard/openapi/out/go"
 )
 
 func BuildMythrilServiceALPHA(apiKey string) generic.MythrilService {
-	log.Debug("Building API cl")
-
 	c := openapi.NewConfiguration()
 	client := openapi.NewAPIClient(c)
 
@@ -24,9 +21,7 @@ type MythrilServiceALPHA struct {
 }
 
 func (api *MythrilServiceALPHA) Submit(bytecode string) (*uuid.UUID, error) {
-	ctx := context.Background()
-
-	ctx = context.WithValue(ctx, openapi.ContextAPIKey, openapi.APIKey{api.apiKey, "Bearer"})
+	ctx := api.getAuthenticatedContext()
 
 	options := openapi.SubmitAnalysisOpts{
 		"bytecode",
@@ -34,40 +29,57 @@ func (api *MythrilServiceALPHA) Submit(bytecode string) (*uuid.UUID, error) {
 		nil,
 	}
 	analysisApi := api.openApiClient.AnalysisApi
-	response, _, error := analysisApi.SubmitAnalysis(ctx, options)
+	response, _, err := analysisApi.SubmitAnalysis(ctx, options)
 
-	if error != nil {
-		log.Fatal(error)
+	if err != nil {
+		return nil, err
 	}
 
 	uuid, err := uuid.Parse(response.Uuid)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	return &uuid, nil
+	return &uuid, err
 }
 
 func (api *MythrilServiceALPHA) CheckStatus(_uuid uuid.UUID) (*generic.AnalysisJobStatus, error) {
-	ctx := context.Background()
-
-	ctx = context.WithValue(ctx, openapi.ContextAPIKey, openapi.APIKey{api.apiKey, "Bearer"})
-
+	ctx := api.getAuthenticatedContext()
 
 	analysisApi := api.openApiClient.AnalysisApi
-	response, _, error := analysisApi.GetAnalysis(ctx, _uuid.String())
+	response, _, err := analysisApi.GetAnalysis(ctx, _uuid.String())
 
-	//log.Info(response)
-	//log.Info(http_response)
-
-	if error != nil {
-		log.Fatal(error)
+	if err != nil {
+		return nil, err
 	}
 
 	return &generic.AnalysisJobStatus{Uuid: _uuid, Status: response.Status}, nil
-
 }
 
 func (api *MythrilServiceALPHA) GetIssueResult(_uuid uuid.UUID) ([]generic.Issue, error) {
-	return nil, nil
+	ctx := api.getAuthenticatedContext()
+
+	analysisApi := api.openApiClient.AnalysisApi
+	response, _, err := analysisApi.GetAnalysisIssues(ctx, _uuid.String())
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]generic.Issue, 0)
+	for _, issue := range response {
+		result = append(result,
+			generic.Issue{
+				Title: issue.Title,
+				Description: issue.Description,
+				Debug: issue.Debug,
+				Address: issue.Address,
+				Type: issue.Type,
+				Function: issue.Function,
+			})
+	}
+
+	return result, nil
+}
+
+func (api *MythrilServiceALPHA) getAuthenticatedContext() context.Context {
+	ctx := context.Background()
+	return context.WithValue(ctx, openapi.ContextAPIKey, openapi.APIKey{api.apiKey, "Bearer"})
 }

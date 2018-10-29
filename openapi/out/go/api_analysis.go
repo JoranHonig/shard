@@ -173,14 +173,14 @@ Lists issues detected during the analysis specified by UUID. Request will fail f
  * @param uuid analysis id
 @return AnalysisIssuesResponse
 */
-func (a *AnalysisApiService) GetAnalysisIssues(ctx context.Context, uuid int32) (AnalysisIssuesResponse, *http.Response, error) {
+func (a *AnalysisApiService) GetAnalysisIssues(ctx context.Context, uuid string) ([]AnalysisIssuesResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod   = strings.ToUpper("Get")
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  AnalysisIssuesResponse
+		localVarReturnValue  []AnalysisIssuesResponse
 	)
 
 	// create path and map variables
@@ -547,7 +547,6 @@ func (a *AnalysisApiService) SubmitAnalysis(ctx context.Context, submitAnalysisO
 	}
 
 	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	fmt.Println(string(localVarBody))
 	localVarHttpResponse.Body.Close()
 	if err != nil {
 		return localVarReturnValue, localVarHttpResponse, err

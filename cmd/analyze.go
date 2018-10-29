@@ -8,6 +8,9 @@ import (
 	"shard/core"
 	"shard/mythril"
 	"regexp"
+	"shard/mythril/generic"
+	"text/template"
+	"os"
 )
 
 var apiKey string
@@ -15,9 +18,9 @@ var analysisService core.AnalysisService
 
 func init() {
 
-	analyzeCmd.Flags().StringVarP(&apiKey, "api-key", "k", "", "The api key to authenticate with")
+	analyzeCmd.Flags().StringVarP(&apiKey, "api-key", "k", "", "The api key to authenticate with. Overrides config value.")
 	viper.BindPFlag("api-key", analyzeCmd.Flags().Lookup("api-key"))
-	rootCmd.AddCommand(analyzeCmd)
+	RootCmd.AddCommand(analyzeCmd)
 }
 
 var analyzeCmd = &cobra.Command{
@@ -61,7 +64,6 @@ func setupAnalysisService() {
 
 func verifyApiKey(){
 	apiKey = viper.GetString("api-key")
-	fmt.Println(apiKey)
 	if len(apiKey) == 0 {
 		println("No valid api key provided, exiting...")
 		log.Exit(0)
@@ -96,8 +98,23 @@ func determineMode(argument string) (InputType) {
 
 func analyzeBytecode(bytecode string) {
 	log.Info(fmt.Sprintf("Starting analysis for: %s", bytecode))
-	_, err := analysisService.AnalyzeBytecode(bytecode)
+	issues, err := analysisService.AnalyzeBytecode(bytecode)
 	if err != nil {
 		log.Fatal(err)
+	}
+	if len(issues) == 0 {
+		fmt.Println("No issues found")
+	} else {
+		printLeThings(issues)
+	}
+}
+
+func printLeThings(issues []generic.Issue) {
+	templ, err := template.New("IssueTemplate").Parse("== {{.Title}} ==\n{{.Description}}")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, issue := range issues {
+		templ.Execute(os.Stdout, issue)
 	}
 }

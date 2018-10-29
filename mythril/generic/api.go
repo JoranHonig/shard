@@ -11,8 +11,12 @@ type MythrilService interface {
 }
 
 type Issue struct {
-	title string
-	description string
+	Title string
+	Description string
+	Function string
+	Type string
+	Address string
+	Debug string
 }
 
 type AnalysisJobStatus struct {
