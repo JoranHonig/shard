@@ -19,7 +19,7 @@ shard help
 
 [WIP] To analyze a contract execute:
 ```
-> shard analyze -f filename.sol
+> shard analyze filename.sol
 # or
-> shard analyze -c 0x606b...
+> shard analyze 0x606b...
 ```
