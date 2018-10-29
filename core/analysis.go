@@ -6,6 +6,7 @@ import (
 	"errors"
 	"log"
 	"github.com/sirupsen/logrus"
+	"shard/common"
 )
 
 type SoliditySource struct {
@@ -23,10 +24,10 @@ type SolidityContract struct {
 }
 
 type AnalysisService interface {
-	AnalyzeRuntimeBytecode(bytecode string) ([]generic.Issue, error)
-	AnalyzeBytecode(bytecode string) ([]generic.Issue, error)
-	AnalyzeSourceCode(sourceCode string) ([]generic.Issue, error)
-	AnalyzeContract(contract SolidityContract) ([]generic.Issue, error)
+	AnalyzeRuntimeBytecode(bytecode string) ([]common.Issue, error)
+	AnalyzeBytecode(bytecode string) ([]common.Issue, error)
+	AnalyzeSourceCode(sourceCode string) ([]common.Issue, error)
+	AnalyzeContract(contract SolidityContract) ([]common.Issue, error)
 }
 
 
@@ -34,7 +35,7 @@ type BaseAnalysisService struct {
 	MythrilService generic.MythrilService
 }
 
-func IsClosed(ch <-chan []generic.Issue) bool {
+func IsClosed(ch <-chan []common.Issue) bool {
 	select {
 	case <-ch:
 		return true
@@ -44,8 +45,8 @@ func IsClosed(ch <-chan []generic.Issue) bool {
 	return false
 }
 
-func (b *BaseAnalysisService) AnalyzeRuntimeBytecode(bytecode string) ([]generic.Issue, error){
-	resultChannel := make(chan []generic.Issue, 1)
+func (b *BaseAnalysisService) AnalyzeRuntimeBytecode(bytecode string) ([]common.Issue, error){
+	resultChannel := make(chan []common.Issue, 1)
 
 	select {
 	case <- time.After(10 * time.Second):
@@ -55,9 +56,9 @@ func (b *BaseAnalysisService) AnalyzeRuntimeBytecode(bytecode string) ([]generic
 	}
 }
 
-func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string) ([]generic.Issue, error) {
+func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string) ([]common.Issue, error) {
 
-	resultChannel := make(chan []generic.Issue, 1)
+	resultChannel := make(chan []common.Issue, 1)
 	go func() {
 		logrus.Debug("Submitting job to the mythril service")
 		id, err := b.MythrilService.Submit(bytecode)
@@ -107,8 +108,8 @@ func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string) ([]generic.Issue,
 	}
 }
 
-func (b *BaseAnalysisService) AnalyzeSourceCode(sourceCode string) ([]generic.Issue, error){
-	resultChannel := make(chan []generic.Issue, 1)
+func (b *BaseAnalysisService) AnalyzeSourceCode(sourceCode string) ([]common.Issue, error){
+	resultChannel := make(chan []common.Issue, 1)
 
 	select {
 	case <- time.After(10 * time.Second):
@@ -118,8 +119,8 @@ func (b *BaseAnalysisService) AnalyzeSourceCode(sourceCode string) ([]generic.Is
 	}
 }
 
-func (b *BaseAnalysisService) AnalyzeContract(contract SolidityContract) ([]generic.Issue, error){
-	resultChannel := make(chan []generic.Issue, 1)
+func (b *BaseAnalysisService) AnalyzeContract(contract SolidityContract) ([]common.Issue, error){
+	resultChannel := make(chan []common.Issue, 1)
 
 	select {
 	case <- time.After(10 * time.Second):

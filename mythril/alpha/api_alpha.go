@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"shard/mythril/generic"
 	"shard/openapi/out/go"
+	"shard/common"
 )
 
 func BuildMythrilServiceALPHA(apiKey string) generic.MythrilService {
@@ -53,7 +54,7 @@ func (api *MythrilServiceALPHA) CheckStatus(_uuid uuid.UUID) (*generic.AnalysisJ
 	return &generic.AnalysisJobStatus{Uuid: _uuid, Status: response.Status}, nil
 }
 
-func (api *MythrilServiceALPHA) GetIssueResult(_uuid uuid.UUID) ([]generic.Issue, error) {
+func (api *MythrilServiceALPHA) GetIssueResult(_uuid uuid.UUID) ([]common.Issue, error) {
 	ctx := api.getAuthenticatedContext()
 
 	analysisApi := api.openApiClient.AnalysisApi
@@ -63,10 +64,10 @@ func (api *MythrilServiceALPHA) GetIssueResult(_uuid uuid.UUID) ([]generic.Issue
 		return nil, err
 	}
 
-	result := make([]generic.Issue, 0)
+	result := make([]common.Issue, 0)
 	for _, issue := range response {
 		result = append(result,
-			generic.Issue{
+			common.Issue{
 				Title: issue.Title,
 				Description: issue.Description,
 				Debug: issue.Debug,

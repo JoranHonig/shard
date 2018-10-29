@@ -7,9 +7,6 @@ import (
 	"github.com/spf13/viper"
 	"shard/core"
 	"regexp"
-	"shard/mythril/generic"
-	"text/template"
-	"os"
 	"shard/mythril"
 )
 
@@ -100,21 +97,9 @@ func analyzeBytecode(bytecode string) {
 	if len(issues) == 0 {
 		fmt.Println("No issues found")
 	} else {
-		printLeThings(issues)
+		for _, issue := range issues {
+			fmt.Println(issue.String())
+		}
 	}
 }
 
-func printLeThings(issues []generic.Issue) {
-	templ, err := template.New("IssueTemplate").Parse(
-		"== {{.Title}} ==\n" +
-			"Function: {{.Function}} \n" +
-			"Type: {{.Type}} \n" +
-			"Description: \n" +
-			"{{.Description}}")
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, issue := range issues {
-		templ.Execute(os.Stdout, issue)
-	}
-}
