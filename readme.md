@@ -1,6 +1,10 @@
 # Shard
 
 Shard is a light mythril client
+## Installation
+```
+snap install --jailmode --edge shard
+```
 ## Configuration
 You can put a config file in ```$HOME/.config/shard.yaml``` containing your api key.
 shard.yaml contents:
