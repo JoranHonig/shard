@@ -12,7 +12,7 @@ parts:
   shard:
     source: .
     plugin: go
-    go-importpath: shard
+    go-importpath: github.com/JoranHonig/shard
 
 apps:
   shard:

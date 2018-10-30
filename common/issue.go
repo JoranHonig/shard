@@ -1,22 +1,22 @@
 package common
 
 import (
-	"text/template"
 	"bytes"
+	"text/template"
 )
 
 type Issue struct {
-	Title string
+	Title       string
 	Description string
-	Function string
-	Type string
-	Address string
-	Debug string
+	Function    string
+	Type        string
+	Address     string
+	Debug       string
 }
 
 func (i *Issue) String() string {
 	templ, err := template.New("IssueTemplate").Parse(
-			"== {{.Title}} ==\n" +
+		"== {{.Title}} ==\n" +
 			"Function: {{.Function}} \n" +
 			"Type: {{.Type}} \n" +
 			"Description: \n" +

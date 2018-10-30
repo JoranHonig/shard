@@ -1,9 +1,9 @@
 package core
 
 import (
-	"strings"
-	"github.com/ethereum/go-ethereum/common/compiler"
 	"errors"
+	"github.com/ethereum/go-ethereum/common/compiler"
+	"strings"
 )
 
 // Compiles the contract at _filename

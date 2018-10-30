@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"fmt"
-	"os"
-	"github.com/spf13/viper"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"os"
 )
 
 var RootCmd = &cobra.Command{
@@ -30,7 +30,6 @@ var versionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Shard v0.0.1")
 	},
-
 }
 
 func Execute() {
@@ -46,16 +45,16 @@ func init() {
 	cobra.OnInitialize(setupViper)
 
 	RootCmd.Flags().String("config", "", "config file (default is $HOME/.config/shard.yaml)")
-	RootCmd.PersistentFlags().BoolP("verbose","v", false, "Enable verbose logging.")
+	RootCmd.PersistentFlags().BoolP("verbose", "v", false, "Enable verbose logging.")
 }
 
-func setupViper(){
-	viper.SetConfigType("yaml") // or viper.SetConfigType("YAML")
-	viper.SetConfigName("shard") // name of config file (without extension)
-	viper.AddConfigPath("$HOME/.config")  // call multiple times to add many search paths
-	viper.AddConfigPath(".")               // optionally look for config in the working directory
-	err := viper.ReadInConfig() // Find and read the config file
-	if err != nil { // Handle errors reading the config file
+func setupViper() {
+	viper.SetConfigType("yaml")          // or viper.SetConfigType("YAML")
+	viper.SetConfigName("shard")         // name of config file (without extension)
+	viper.AddConfigPath("$HOME/.config") // call multiple times to add many search paths
+	viper.AddConfigPath(".")             // optionally look for config in the working directory
+	err := viper.ReadInConfig()          // Find and read the config file
+	if err != nil {                      // Handle errors reading the config file
 		logrus.Info(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
 }
