@@ -1,4 +1,5 @@
 # Shard
+[![Snap Status](https://build.snapcraft.io/badge/JoranHonig/shard.svg)](https://build.snapcraft.io/user/JoranHonig/shard)
 
 Shard is a light mythril client
 
