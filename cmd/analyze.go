@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/JoranHonig/shard/core"
+	"github.com/JoranHonig/shard/mythril"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"shard/core"
 	"regexp"
-	"shard/mythril"
 )
 
 var apiKey string
@@ -63,13 +63,14 @@ var analyzeCmd = &cobra.Command{
 }
 
 type InputType int
+
 const (
 	Bin InputType = 1 << iota
 	Filename
 	BinRuntime
 )
 
-func determineMode(argument string) (InputType) {
+func determineMode(argument string) InputType {
 	isBytecode, err := regexp.MatchString("^(0x)?([0-9a-fA-F]{2})+$", argument)
 
 	var inputType InputType
@@ -102,4 +103,3 @@ func analyzeBytecode(bytecode string) {
 		}
 	}
 }
-

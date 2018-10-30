@@ -1,0 +1,19 @@
+name: shard
+version: git
+summary: Shard is a light mythril client
+description: |
+    Shard is an cli that provides access to the mythril platform
+
+grade: devel
+confinement: devmode
+
+
+parts:
+  shard:
+    source: .
+    plugin: go
+    go-importpath: shard
+
+apps:
+  shard:
+    command: shard

@@ -1,8 +1,8 @@
 package generic
 
 import (
+	"github.com/JoranHonig/shard/common"
 	"github.com/google/uuid"
-	"shard/common"
 )
 
 type MythrilService interface {
@@ -12,9 +12,6 @@ type MythrilService interface {
 }
 
 type AnalysisJobStatus struct {
-	Uuid uuid.UUID
+	Uuid   uuid.UUID
 	Status string
 }
-
-
-

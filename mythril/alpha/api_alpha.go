@@ -2,10 +2,10 @@ package alpha
 
 import (
 	"context"
+	"github.com/JoranHonig/shard/common"
+	"github.com/JoranHonig/shard/mythril/generic"
+	"github.com/JoranHonig/shard/openapi/out/go"
 	"github.com/google/uuid"
-	"shard/mythril/generic"
-	"shard/openapi/out/go"
-	"shard/common"
 )
 
 func BuildMythrilServiceALPHA(apiKey string) generic.MythrilService {
@@ -68,12 +68,12 @@ func (api *MythrilServiceALPHA) GetIssueResult(_uuid uuid.UUID) ([]common.Issue,
 	for _, issue := range response {
 		result = append(result,
 			common.Issue{
-				Title: issue.Title,
+				Title:       issue.Title,
 				Description: issue.Description,
-				Debug: issue.Debug,
-				Address: issue.Address,
-				Type: issue.Type,
-				Function: issue.Function,
+				Debug:       issue.Debug,
+				Address:     issue.Address,
+				Type:        issue.Type,
+				Function:    issue.Function,
 			})
 	}
 

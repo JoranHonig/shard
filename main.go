@@ -1,7 +1,7 @@
 package main
 
 import (
-	"shard/cmd"
+	"github.com/JoranHonig/shard/cmd"
 )
 
 func main() {

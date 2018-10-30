@@ -1,26 +1,26 @@
 package core
 
 import (
-	"shard/mythril/generic"
-	"time"
 	"errors"
-	"log"
+	"github.com/JoranHonig/shard/common"
+	"github.com/JoranHonig/shard/mythril/generic"
 	"github.com/sirupsen/logrus"
-	"shard/common"
+	"log"
+	"time"
 )
 
 type SoliditySource struct {
-	Filename string
+	Filename   string
 	SourceCode string
 }
 
 type SolidityContract struct {
-	BontractName string
-	Bytecode string
-	RuntimeBytecode string
-	SourceMap string
+	BontractName     string
+	Bytecode         string
+	RuntimeBytecode  string
+	SourceMap        string
 	RuntimeSourceMap string
-	Sources []SoliditySource
+	Sources          []SoliditySource
 }
 
 type AnalysisService interface {
@@ -29,7 +29,6 @@ type AnalysisService interface {
 	AnalyzeSourceCode(sourceCode string) ([]common.Issue, error)
 	AnalyzeContract(contract SolidityContract) ([]common.Issue, error)
 }
-
 
 type BaseAnalysisService struct {
 	MythrilService generic.MythrilService
@@ -45,13 +44,13 @@ func IsClosed(ch <-chan []common.Issue) bool {
 	return false
 }
 
-func (b *BaseAnalysisService) AnalyzeRuntimeBytecode(bytecode string) ([]common.Issue, error){
+func (b *BaseAnalysisService) AnalyzeRuntimeBytecode(bytecode string) ([]common.Issue, error) {
 	resultChannel := make(chan []common.Issue, 1)
 
 	select {
-	case <- time.After(10 * time.Second):
+	case <-time.After(10 * time.Second):
 		return nil, errors.New("Timeout encountered in the analysis")
-	case result := <- resultChannel:
+	case result := <-resultChannel:
 		return result, nil
 	}
 }
@@ -100,34 +99,32 @@ func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string) ([]common.Issue, 
 	}()
 
 	select {
-	case <- time.After(10 * time.Second):
+	case <-time.After(10 * time.Second):
 		close(resultChannel)
 		return nil, errors.New("Timeout encountered in the analysis")
-	case result := <- resultChannel:
+	case result := <-resultChannel:
 		return result, nil
 	}
 }
 
-func (b *BaseAnalysisService) AnalyzeSourceCode(sourceCode string) ([]common.Issue, error){
+func (b *BaseAnalysisService) AnalyzeSourceCode(sourceCode string) ([]common.Issue, error) {
 	resultChannel := make(chan []common.Issue, 1)
 
 	select {
-	case <- time.After(10 * time.Second):
+	case <-time.After(10 * time.Second):
 		return nil, errors.New("Timeout encountered in the analysis")
-	case result := <- resultChannel:
+	case result := <-resultChannel:
 		return result, nil
 	}
 }
 
-func (b *BaseAnalysisService) AnalyzeContract(contract SolidityContract) ([]common.Issue, error){
+func (b *BaseAnalysisService) AnalyzeContract(contract SolidityContract) ([]common.Issue, error) {
 	resultChannel := make(chan []common.Issue, 1)
 
 	select {
-	case <- time.After(10 * time.Second):
+	case <-time.After(10 * time.Second):
 		return nil, errors.New("Timeout encountered in the analysis")
-	case result := <- resultChannel:
+	case result := <-resultChannel:
 		return result, nil
 	}
 }
-
-

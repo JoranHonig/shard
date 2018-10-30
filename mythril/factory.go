@@ -1,9 +1,9 @@
 package mythril
 
 import (
-	"shard/mythril/alpha"
-	"shard/mythril/generic"
 	"errors"
+	"github.com/JoranHonig/shard/mythril/alpha"
+	"github.com/JoranHonig/shard/mythril/generic"
 )
 
 type MythrilServiceType int
@@ -14,7 +14,7 @@ const (
 	V2
 )
 
-func BuildMythrilService(version MythrilServiceType, apiKey string) (generic.MythrilService, error){
+func BuildMythrilService(version MythrilServiceType, apiKey string) (generic.MythrilService, error) {
 	switch version {
 	case ALPHA:
 		return alpha.BuildMythrilServiceALPHA(apiKey), nil
