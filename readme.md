@@ -1,6 +1,12 @@
 # Shard
+[![Snap Status](https://build.snapcraft.io/badge/JoranHonig/shard.svg)](https://build.snapcraft.io/user/JoranHonig/shard)
 
 Shard is a light mythril client
+
+## Installation (unstable)
+```
+snap install --devmode --edge shard
+```
 ## Configuration
 You can put a config file in ```$HOME/.config/shard.yaml``` containing your api key.
 shard.yaml contents:
