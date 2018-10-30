@@ -10,7 +10,9 @@ confinement: devmode
 
 parts:
   shard:
-    source: .
+    source: https://github.com/JoranHonig/shard.git
+    source-tag: v0.0.01
+    source-type: git
     plugin: go
     go-importpath: github.com/JoranHonig/shard
 
