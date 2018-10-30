@@ -1,7 +1,6 @@
 # Shard
 
-Shard is a light mythril client that is amazingly awesome
-
+Shard is a light mythril client
 ## Configuration
 You can put a config file in ```$HOME/.config/shard.yaml``` containing your api key.
 shard.yaml contents:
