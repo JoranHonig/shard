@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/JoranHonig/shard/common"
 	"github.com/JoranHonig/shard/mythril/generic"
-	"github.com/JoranHonig/shard/openapi/out/go"
+	"github.com/JoranHonig/shard/mythril/alpha/openapi/out/go"
 	"github.com/google/uuid"
 )
 
