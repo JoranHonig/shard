@@ -45,7 +45,7 @@ func IsClosed(ch <-chan []common.Issue) bool {
 
 func (b *BaseAnalysisService) AnalyzeRuntimeBytecode(bytecode string, timeout int) ([]common.Issue, error) {
 	logrus.WithFields(logrus.Fields{
-		"timeout": timeout,
+		"timeout":  timeout,
 		"function": "AnalyzeRuntimeBytecode",
 	}).Info("Starting analysis")
 
@@ -61,7 +61,7 @@ func (b *BaseAnalysisService) AnalyzeRuntimeBytecode(bytecode string, timeout in
 
 func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string, timeout int) ([]common.Issue, error) {
 	logrus.WithFields(logrus.Fields{
-		"timeout": timeout,
+		"timeout":  timeout,
 		"function": "AnalyzeBytecode",
 	}).Info("Starting analysis")
 
@@ -107,7 +107,7 @@ func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string, timeout int) ([]c
 	}()
 
 	select {
-	case <- time.After(time.Duration(timeout) * time.Second):
+	case <-time.After(time.Duration(timeout) * time.Second):
 		close(resultChannel)
 		return nil, errors.New("Timeout encountered in the analysis")
 	case result := <-resultChannel:

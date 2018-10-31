@@ -42,7 +42,7 @@ var (
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	RootCmd.PersistentFlags().StringP( "api-key", "k", "", "The api key to authenticate with. Overrides config value.")
+	RootCmd.PersistentFlags().StringP("api-key", "k", "", "The api key to authenticate with. Overrides config value.")
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/.shard.yaml)")
 	RootCmd.PersistentFlags().BoolP("verbose", "v", false, "Enable verbose logging.")
 	viper.BindPFlag("api-key", analyzeCmd.Flags().Lookup("api-key"))

@@ -13,6 +13,7 @@ import (
 var (
 	timeout int
 )
+
 func init() {
 	RootCmd.AddCommand(analyzeCmd)
 	RootCmd.PersistentFlags().IntVarP(&timeout, "timeout", "t", 10, "How long shard should wait for the api")
