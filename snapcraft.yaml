@@ -9,12 +9,19 @@ confinement: devmode
 
 
 parts:
+  go:
+    source-tag: go1.8.3
   shard:
+    after: [go]
     source: https://github.com/JoranHonig/shard.git
     source-type: git
     plugin: go
     go-importpath: github.com/JoranHonig/shard
-
+#    go-packages:
+#      - github.com/spf13/cobra
+#      - github.com/spf13/viper
+#      - github.com/sirupsen/logrus
+#      - github.com/ethereum/go-ethereum
 apps:
   shard:
     command: shard
