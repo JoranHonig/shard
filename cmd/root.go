@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
@@ -17,9 +17,9 @@ var RootCmd = &cobra.Command{
 		viper.BindPFlag("verbose", cmd.Flags().Lookup("verbose"))
 
 		if viper.GetBool("verbose") {
-			logrus.SetLevel(logrus.DebugLevel)
+			log.SetLevel(log.DebugLevel)
 		} else {
-			logrus.SetLevel(logrus.ErrorLevel)
+			log.SetLevel(log.ErrorLevel)
 		}
 	},
 }
@@ -55,6 +55,8 @@ func setupViper() {
 	viper.AddConfigPath(".")             // optionally look for config in the working directory
 	err := viper.ReadInConfig()          // Find and read the config file
 	if err != nil {                      // Handle errors reading the config file
-		logrus.Info(fmt.Errorf("Fatal error config file: %s \n", err))
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Info("Failed to load configuration")
 	}
 }
