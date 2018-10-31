@@ -10,12 +10,7 @@ import (
 	"regexp"
 )
 
-var apiKey string
-var analysisService core.AnalysisService
-
 func init() {
-	analyzeCmd.Flags().StringVarP(&apiKey, "api-key", "k", "", "The api key to authenticate with. Overrides config value.")
-	viper.BindPFlag("api-key", analyzeCmd.Flags().Lookup("api-key"))
 	RootCmd.AddCommand(analyzeCmd)
 }
 
@@ -25,7 +20,7 @@ var analyzeCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		// Check api key
-		apiKey = viper.GetString("api-key")
+		apiKey := viper.GetString("api-key")
 		if len(apiKey) == 0 {
 			println("No valid api key provided, exiting...")
 			log.Exit(0)

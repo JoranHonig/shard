@@ -8,7 +8,7 @@ Shard is a light mythril client
 snap install --devmode --edge shard
 ```
 ## Configuration
-You can put a config file in ```$HOME/.config/shard.yaml``` containing your api key.
+You can put a config file in ```$HOME/.config/.shard.yaml``` containing your api key.
 shard.yaml contents:
 ```yaml
 api-key: <put your api key here>
@@ -19,7 +19,7 @@ a configuration file if it can't find one in the aforementioned directory.
 ## Usage
 As any with any tool, the help command can be very useful
 ```
-> $ ./shard                                                                                                                                                                              [±master ●]
+> $ shard                                                                                                                                                                              [±master ●]
 Shard is a mythril light client
 
 Usage:
@@ -31,9 +31,10 @@ Available Commands:
   version     Print the version number of Shard
 
 Flags:
-      --config string   config file (default is $HOME/.config/shard.yaml)
-  -h, --help            help for shard
-  -v, --verbose         Enable verbose logging.
+  -k, --api-key string   The api key to authenticate with. Overrides config value.
+      --config string    config file (default is $HOME/.config/.shard.yaml)
+  -h, --help             help for shard
+  -v, --verbose          Enable verbose logging.
 
 Use "shard [command] --help" for more information about a command.
 
