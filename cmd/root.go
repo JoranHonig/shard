@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/JoranHonig/shard/core"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
@@ -23,9 +23,9 @@ var (
 			viper.BindPFlag("verbose", cmd.Flags().Lookup("verbose"))
 
 			if viper.GetBool("verbose") {
-				log.SetLevel(log.DebugLevel)
+				logrus.SetLevel(logrus.DebugLevel)
 			} else {
-				log.SetLevel(log.ErrorLevel)
+				logrus.SetLevel(logrus.ErrorLevel)
 			}
 		},
 	}
@@ -77,7 +77,7 @@ func initConfig() {
 
 	if err := viper.ReadInConfig(); err != nil {
 		println("aaah")
-		log.WithFields(log.Fields{
+		logrus.WithFields(logrus.Fields{
 			"error": err,
 		}).Info("Failed to load configuration")
 	}

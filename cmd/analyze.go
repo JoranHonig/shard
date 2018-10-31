@@ -10,8 +10,13 @@ import (
 	"regexp"
 )
 
+var (
+	timeout int
+)
 func init() {
 	RootCmd.AddCommand(analyzeCmd)
+	RootCmd.PersistentFlags().IntVarP(&timeout, "timeout", "t", 10, "How long shard should wait for the api")
+
 }
 
 var analyzeCmd = &cobra.Command{
@@ -86,7 +91,7 @@ func determineMode(argument string) InputType {
 
 func analyzeBytecode(bytecode string) {
 	log.Info(fmt.Sprintf("Starting analysis for: %s", bytecode))
-	issues, err := analysisService.AnalyzeBytecode(bytecode)
+	issues, err := analysisService.AnalyzeBytecode(bytecode, timeout)
 	if err != nil {
 		log.Fatal(err)
 	}
