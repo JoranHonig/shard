@@ -1,7 +1,7 @@
 package generic
 
 import (
-	"github.com/JoranHonig/shard/common"
+	"github.com/JoranHonig/shard/pkg/common"
 	"github.com/google/uuid"
 )
 

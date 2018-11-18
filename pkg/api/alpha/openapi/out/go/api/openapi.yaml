@@ -18,7 +18,7 @@ info:
   title: Mythril API
   version: v1
 servers:
-- url: https://api.mythril.ai/v1
+- url: https://api.api.ai/v1
 paths:
   /analyses:
     get:
@@ -445,7 +445,7 @@ components:
       type: object
     inline_response_200:
       example:
-        mythril: mythril
+        mythril: api
         api: api
       properties:
         api:

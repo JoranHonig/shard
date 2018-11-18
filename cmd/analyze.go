@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/JoranHonig/shard/core"
-	"github.com/JoranHonig/shard/mythril"
+	"github.com/JoranHonig/shard/pkg/core"
+	"github.com/JoranHonig/shard/pkg/api"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -32,8 +32,8 @@ var analyzeCmd = &cobra.Command{
 			log.Exit(0)
 		}
 
-		// Setup mythril service
-		s, err := mythril.BuildMythrilService(mythril.ALPHA, apiKey)
+		// Setup api service
+		s, err := api.BuildMythrilService(api.ALPHA, apiKey)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -46,8 +46,6 @@ var analyzeCmd = &cobra.Command{
 		case Bin:
 			analyzeBytecode(args[0])
 		case Filename:
-			log.Fatal("Compilation not fully supported")
-
 			byteCodes, err := core.Compile(args[0])
 
 			if err != nil {

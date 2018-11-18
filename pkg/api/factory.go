@@ -1,9 +1,9 @@
-package mythril
+package api
 
 import (
 	"errors"
-	"github.com/JoranHonig/shard/mythril/alpha"
-	"github.com/JoranHonig/shard/mythril/generic"
+	"github.com/JoranHonig/shard/pkg/api/alpha"
+	"github.com/JoranHonig/shard/pkg/api/generic"
 )
 
 type MythrilServiceType int

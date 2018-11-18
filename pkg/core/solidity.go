@@ -23,7 +23,7 @@ func Compile(filename string) ([]string, error) {
 			return nil, errors.New("Wrong contract name provided")
 
 		}
-		return []string{contract.Code}, nil
+		return []string{contract.RuntimeCode}, nil
 	}
 
 	contracts, err := compiler.CompileSolidity("", filename)
@@ -33,7 +33,7 @@ func Compile(filename string) ([]string, error) {
 
 	result := make([]string, 0)
 	for _, contract := range contracts {
-		result = append(result, contract.Code)
+		result = append(result, contract.RuntimeCode)
 	}
 
 	return result, nil

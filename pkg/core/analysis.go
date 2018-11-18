@@ -2,8 +2,8 @@ package core
 
 import (
 	"errors"
-	"github.com/JoranHonig/shard/common"
-	"github.com/JoranHonig/shard/mythril/generic"
+	"github.com/JoranHonig/shard/pkg/common"
+	"github.com/JoranHonig/shard/pkg/api/generic"
 	"github.com/sirupsen/logrus"
 	"time"
 )
@@ -67,7 +67,7 @@ func (b *BaseAnalysisService) AnalyzeBytecode(bytecode string, timeout int) ([]c
 
 	resultChannel := make(chan []common.Issue, 1)
 	go func() {
-		logrus.Debug("Submitting job to the mythril service")
+		logrus.Debug("Submitting job to the api service")
 		id, err := b.MythrilService.Submit(bytecode)
 
 		if err != nil {

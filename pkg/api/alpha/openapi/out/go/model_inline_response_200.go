@@ -13,5 +13,5 @@ type InlineResponse200 struct {
 	// Main version of the API as a whole.
 	Api string `json:"api,omitempty"`
 	// Version of Mythril analyser being used by the API.
-	Mythril string `json:"mythril,omitempty"`
+	Mythril string `json:"api,omitempty"`
 }

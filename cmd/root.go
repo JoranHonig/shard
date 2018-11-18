@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/JoranHonig/shard/core"
+	"github.com/JoranHonig/shard/pkg/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -16,7 +16,7 @@ var analysisService core.AnalysisService
 var (
 	RootCmd = &cobra.Command{
 		Use:   "shard",
-		Short: "Shard is a mythril light client",
+		Short: "Shard is a api light client",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			viper.BindPFlags(cmd.Flags())
 

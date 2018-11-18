@@ -1,6 +1,6 @@
 name: shard
 version: git
-summary: Shard is a light mythril client
+summary: Shard is a light api client
 description: |
     Shard is an cli that provides access to the mythril platform
 
